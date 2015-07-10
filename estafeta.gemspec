@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
     no official way to get this through a webservice or API and integrate into your own
     solution, thus this gem will do the heavy lifting for you.
   EOF
-  spec.homepage      = 'TODO: Put your gem's website or public repo URL here.''
+  spec.homepage      = "TODO: Put your gem's website or public repo URL here.'"
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
