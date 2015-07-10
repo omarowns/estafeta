@@ -22,7 +22,7 @@ describe Estafeta do
 
   describe 'Standard' do
 
-    let(:numero_guia_exitoso) { 6659999999061710015592 }
+    let(:numero_guia_exitoso) { 8058606738655781217161 }
 
     it 'responds to an endpoint variable' do
       expect(Estafeta::Standard::ENDPOINT).not_to be nil
