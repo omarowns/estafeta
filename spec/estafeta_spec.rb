@@ -12,6 +12,12 @@ module EstafetaVcr
       yield
     end
   end
+
+  def self.post_entregado
+    VCR.use_cassette('estafeta_post_successful_entregado') do
+      yield
+    end
+  end
 end
 
 describe Estafeta do
@@ -94,6 +100,21 @@ describe Estafeta do
 
         before do
           EstafetaVcr.post { std.post }
+          std.retrieve_page
+          std.parse
+        end
+
+        it 'completes OK' do
+          pending "Add a STATUS to the Class"
+        end
+      end
+
+      context 'with a package that has been delivered' do
+        let(:numero_guia_entregado) { "0018649684780680729892".to_i }
+        let(:std) { Estafeta::Standard.new(guia_numero: numero_guia_entregado) }
+
+        before do
+          EstafetaVcr.post_entregado { std.post }
           std.retrieve_page
           std.parse
         end
