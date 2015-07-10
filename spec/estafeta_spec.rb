@@ -22,10 +22,14 @@ describe Estafeta do
 
   describe 'Standard' do
 
-    let(:numero_guia_exitoso) { 8058606738655781217161 }
+    let(:numero_guia) { 8058606738655781217161 }
 
     it 'responds to an endpoint variable' do
       expect(Estafeta::Standard::ENDPOINT).not_to be nil
+    end
+
+    it 'has a key-value mapping' do
+      expect(Estafeta::Standard::KEYS).not_to be nil
     end
 
     it 'has a query instance variable' do
@@ -34,14 +38,14 @@ describe Estafeta do
     end
 
     it 'can set the query key guias' do
-      std = Estafeta::Standard.new guia_numero: numero_guia_exitoso
+      std = Estafeta::Standard.new guia_numero: numero_guia
       expect(std.query[:guias]).not_to be nil
-      expect(std.query[:guias]).to eq numero_guia_exitoso
+      expect(std.query[:guias]).to eq numero_guia
     end
 
     describe 'making HTTP requests' do
 
-      let(:std) { Estafeta::Standard.new(guia_numero: numero_guia_exitoso) }
+      let(:std) { Estafeta::Standard.new(guia_numero: numero_guia) }
 
       it 'can make a HTTP post to endpoint' do
         EstafetaVcr.post do
@@ -59,7 +63,7 @@ describe Estafeta do
 
     describe 'retrieving a doc page' do
 
-      let(:std) { Estafeta::Standard.new(guia_numero: numero_guia_exitoso) }
+      let(:std) { Estafeta::Standard.new(guia_numero: numero_guia) }
 
       before do
         EstafetaVcr.post { std.post }
@@ -75,7 +79,28 @@ describe Estafeta do
       end
 
       it 'parses the web page' do
+        expect(std.parse).not_to be nil
+      end
+
+      it 'returns a json object' do
         std.parse
+        expect(std.json).not_to be nil
+        expect(std.json.class).to eq Hash
+      end
+
+      context 'with a package in transit' do
+        let(:numero_guia_en_transito) { 8058606738655781217161 }
+        let(:std) { Estafeta::Standard.new(guia_numero: numero_guia_en_transito) }
+
+        before do
+          EstafetaVcr.post { std.post }
+          std.retrieve_page
+          std.parse
+        end
+
+        it 'completes OK' do
+          pending "Add a STATUS to the Class"
+        end
       end
     end
   end

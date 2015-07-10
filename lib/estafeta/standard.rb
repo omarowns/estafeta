@@ -6,7 +6,35 @@ module Estafeta
   class Standard
 
     ENDPOINT = 'http://rastreo3.estafeta.com/RastreoWebInternet/consultaEnvio.do'
-    attr_reader :query, :page, :doc
+    KEYS = {
+      "CP Destino": "cp",
+      "Código de rastreo": "codigo_rastreo",
+      "Destino": "destino",
+      "Dimensiones cm": "dimensiones",
+      "Estatus del envío": "status",
+      "Estatus del servicio": "servicio_status",
+      "Fecha de recolección": "fecha_recoleccion",
+      "Fecha programada  de entrega": "fecha_programada",
+      "Fecha y hora de entrega": "fecha_actual",
+      "Guía documento de retorno": "guia_documento",
+      "Guía internacional": "guia_internacional",
+      "Guías envíos múltiples": "guia_multiples",
+      "Número de guía": "guia",
+      "Número de orden de recolección": "orden_recoleccion",
+      "Orden de rastreo*": "orden_rastreo",
+      "Origen": "origen",
+      "Peso kg": "peso",
+      "Peso volumétrico kg": "peso_vol",
+      "Recibió": 'recibio',
+      "Referencia cliente": "referencia",
+      "Servicio": "servicio",
+      "Tipo de envío": "tipo",
+      "Historia": 'historia',
+      "Fecha - Hora": 'fecha_hora',
+      "Lugar - Movimiento": 'lugar_movimiento',
+      "Comentarios": 'comentarios'
+    }
+    attr_reader :query, :page, :doc, :json
 
     def initialize(guia_numero: '')
       @query = {
@@ -32,37 +60,10 @@ module Estafeta
 
     def parse
       rows = @doc.css('form > table tr')
-      keys = {
-        "CP Destino": "cp",
-        "Código de rastreo": "codigo_rastreo",
-        "Destino": "destino",
-        "Dimensiones cm": "dimensiones",
-        "Estatus del envío": "status",
-        "Estatus del servicio": "servicio_status",
-        "Fecha de recolección": "fecha_recoleccion",
-        "Fecha programada  de entrega": "fecha_programada",
-        "Fecha y hora de entrega": "fecha_actual",
-        "Guía documento de retorno": "guia_documento",
-        "Guía internacional": "guia_internacional",
-        "Guías envíos múltiples": "guia_multiples",
-        "Número de guía": "guia",
-        "Número de orden de recolección": "orden_recoleccion",
-        "Orden de rastreo*": "orden_rastreo",
-        "Origen": "origen",
-        "Peso kg": "peso",
-        "Peso volumétrico kg": "peso_vol",
-        "Recibió": 'recibio',
-        "Referencia cliente": "referencia",
-        "Servicio": "servicio",
-        "Tipo de envío": "tipo",
-        "Historia": 'historia',
-        "Fecha - Hora": 'fecha_hora',
-        "Lugar - Movimiento": 'lugar_movimiento',
-        "Comentarios": 'comentarios'
-      }
+
 
       if rows[1].css('td').text =~ /no hay información disponible/i then
-        # Add a no response here
+        result = {'info': 'No hay informacion disponible'}
       else
         # Fuuuuuu
         result = {}
@@ -120,10 +121,12 @@ module Estafeta
           respuestas = [respuestas] if historial
 
           Hash[titulos.zip respuestas].each  do |key, value|
-            result[keys[:"#{key}"]] = value
+            result[KEYS[:"#{key}"]] = value
           end
         end # End Rows
       end # End else
+
+      @json = result
     end # End parse
   end # End Standard
 end # End module
