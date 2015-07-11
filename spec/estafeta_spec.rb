@@ -124,6 +124,10 @@ describe Estafeta do
         it 'completes OK' do
           expect(std.json).to eq json_result
         end
+
+        describe 'json result' do
+          pending 'add all the validations of fields that it must have'
+        end
       end
     end
   end
