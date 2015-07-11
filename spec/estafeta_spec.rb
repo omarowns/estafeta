@@ -97,6 +97,7 @@ describe Estafeta do
       context 'with a package in transit' do
         let(:numero_guia_en_transito) { 8058606738655781217161 }
         let(:std) { Estafeta::Standard.new(guia_numero: numero_guia_en_transito) }
+        let(:json_result) { {"guia"=>"8058606738655781217161", "codigo_rastreo"=>"1099674276", "origen"=>"AGUASCALIENTES", "destino"=>"Zamora", "cp"=>" 60300", "servicio_status"=>"Pendiente en transito", "recibio"=>"", "servicio"=>"Entrega garantizada al segundo día hábil", "fecha_actual"=>"", "tipo"=>"PAQUETE", "fecha_programada"=>"13/07/2015", "orden_recoleccion"=>"11422245", "fecha_recoleccion"=>"09/07/2015 06:06 PM", "orden_rastreo"=>"Su envío se encuentra en tiempo para ser entregado el día 13/07/2015, para cualquier duda o comentario  favor de  comunicarse al 01-800-37823382", "guia_multiples"=>" ", "guia_documento"=>" ", "guia_internacional"=>nil, "historia"=>[{:fecha_hora=>"09/07/2015 09:29 PM", :lugar_movimiento=>"AGUASCALIENTES Llegada a centro de distribucion AGU AGUASCALIENTES", :comentarios=>" "}, {:fecha_hora=>"09/07/2015 09:29 PM", :lugar_movimiento=>"AGUASCALIENTES En ruta foranea  hacia ZRA-Zamora", :comentarios=>" "}]} }
 
         before do
           EstafetaVcr.post { std.post }
@@ -105,13 +106,14 @@ describe Estafeta do
         end
 
         it 'completes OK' do
-          pending "Add a STATUS to the Class"
+          expect(std.json).to eq json_result
         end
       end
 
       context 'with a package that has been delivered' do
-        let(:numero_guia_entregado) { "0018649684780680729892".to_i }
+        let(:numero_guia_entregado) { '0018649684780680729892' }
         let(:std) { Estafeta::Standard.new(guia_numero: numero_guia_entregado) }
+        let(:json_result) { {"guia"=>"0018649684780680729892", "codigo_rastreo"=>"3327678855", "origen"=>"ZACATECAS", "destino"=>"Culiacan", "cp"=>" 80430", "servicio_status"=>"Entregado", nil=>"", "servicio"=>"Entrega garantizada al siguiente dia habil (lunes a viernes)", "fecha_actual"=>"25/02/2015 03:00 PM", "tipo"=>"PAQUETE", "fecha_programada"=>"Garantía adquirida no aplica, revisar cobertura, clic aquí", "orden_recoleccion"=>"10679692", "fecha_recoleccion"=>"24/02/2015 01:32 PM", "orden_rastreo"=>"Haga clic  aquí para levantar una orden de rastreo.", "guia_multiples"=>" ", "guia_documento"=>" ", "guia_internacional"=>nil, "historia"=>[{:fecha_hora=>"25/02/2015 01:55 PM", :lugar_movimiento=>"Culiacan En proceso de entrega CUL Culiacan", :comentarios=>" "}, {:fecha_hora=>"25/02/2015 10:19 AM", :lugar_movimiento=>"Culiacan Movimiento en centro de distribucion SAB", :comentarios=>"Envio en proceso de entrega conforme a frecuencia"}, {:fecha_hora=>"25/02/2015 08:56 AM", :lugar_movimiento=>"Culiacan Llegada a centro de distribucion", :comentarios=>"Demora por mal tiempo bloqueo o manifestacion"}, {:fecha_hora=>"25/02/2015 07:15 AM", :lugar_movimiento=>"ESTACION AEREA CUL En ruta foranea  hacia CUL-Culiacan", :comentarios=>" "}, {:fecha_hora=>"25/02/2015 07:14 AM", :lugar_movimiento=>"ESTACION AEREA CUL Llegada a centro de distribucion ACL ESTACION AEREA CUL", :comentarios=>" "}, {:fecha_hora=>"25/02/2015 12:50 AM", :lugar_movimiento=>"Centro de Int. SLP En proceso de entrega", :comentarios=>"Embarque aereo Estafeta"}, {:fecha_hora=>"24/02/2015 08:50 PM", :lugar_movimiento=>"ZACATECAS En ruta foranea  hacia CUL-Culiacan", :comentarios=>" "}, {:fecha_hora=>"24/02/2015 08:20 PM", :lugar_movimiento=>"ZACATECAS Llegada a centro de distribucion ZCL ZACATECAS", :comentarios=>" "}, {:fecha_hora=>"24/02/2015 07:12 PM", :lugar_movimiento=>"Recoleccion en oficina por ruta local", :comentarios=>" "}, {:fecha_hora=>"24/02/2015 01:32 PM", :lugar_movimiento=>"Envio recibido en oficina", :comentarios=>"Garantia de entrega no aplica en destino"}]} }
 
         before do
           EstafetaVcr.post_entregado { std.post }
@@ -120,7 +122,7 @@ describe Estafeta do
         end
 
         it 'completes OK' do
-          pending "Add a STATUS to the Class"
+          expect(std.json).to eq json_result
         end
       end
     end

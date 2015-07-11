@@ -36,14 +36,15 @@ module Estafeta
     }
     attr_reader :query, :page, :doc, :json
 
-    def initialize(guia_numero: '')
+    # Tipo Guia is: ESTAFETA for 22 chars and REFERENCE for 10 chars
+    def initialize(guia_numero: '', tipo_guia: 'ESTAFETA')
       @query = {
         method: '',
         forward:  '',
         idioma: 'es',
         pickUpId: '',
         dispatch: 'doRastreoInternet',
-        tipoGuia: 'ESTAFETA',
+        tipoGuia: tipo_guia,
         guias: guia_numero,
         'image.x' => '55',
         'image.y' => '10'
@@ -125,7 +126,6 @@ module Estafeta
           end
         end # End Rows
       end # End else
-
       @json = result
     end # End parse
   end # End Standard
