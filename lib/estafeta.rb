@@ -1,5 +1,6 @@
-require "estafeta/version"
+require 'estafeta/version'
+require 'estafeta/standard'
 
 module Estafeta
-  # Your code goes here...
+
 end

@@ -1,8 +1,16 @@
 # Estafeta
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/estafeta`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem is a friendly way to retrieve the tracking information for a package
+sent via Estafeta's postal service.
+Currently to get the tracking information you have to visit the website and there's
+no official way to get this through a webservice or API and integrate into your own
+solution, thus this gem will do the heavy lifting for you.
+This works by fetching the webpage through their 'endpoint' and search within
+the page for the parts we are interested in.
+Sounds complicated? It isn't really.
+Sounds like if they change their layout this gem will break? Of course, that's why
+we have tests and if it happens I will adapt the gem immediately.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -32,7 +40,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/estafeta. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/omarowns/estafeta. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## License
