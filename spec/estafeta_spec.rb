@@ -18,6 +18,12 @@ module EstafetaVcr
       yield
     end
   end
+
+  def self.post_fail
+    VCR.use_cassette('estafeta_post_unsuccessful') do
+      yield
+    end
+  end
 end
 
 describe Estafeta do
@@ -47,6 +53,49 @@ describe Estafeta do
       std = Estafeta::Standard.new guia_numero: numero_guia
       expect(std.query[:guias]).not_to be nil
       expect(std.query[:guias]).to eq numero_guia
+    end
+
+    describe 'states' do
+      subject(:std) { Estafeta::Standard.new(guia_numero: numero_guia) }
+
+      it { should respond_to :status }
+
+      describe 'life cycle' do
+
+        it 'should evolve as the program continues' do
+
+          expect(std.status).to eq :new
+          EstafetaVcr.post { std.post }
+          expect(std.status).to eq :post_sent
+          std.retrieve_page
+          expect(std.status).to eq :page_retrieved
+          std.parse
+          expect(std.status).to eq :parsing_ended_ok
+        end
+      end
+
+      context 'when an incorrect tracking is entered' do
+
+        context 'when it belonged to a shipment but no longer exists' do
+          it 'should expect a failure status' do
+            std = Estafeta::Standard.new(guia_numero: 1234567890123456789012)
+            EstafetaVcr.post_fail { std.post }
+            std.retrieve_page
+            std.parse
+            expect(std.status).to eq :parsing_ended_failed
+          end
+        end
+
+        context "when it doesn't exists at all" do
+          it 'should expect a failure status' do
+            std = Estafeta::Standard.new(guia_numero: 1122334455667788990011)
+            EstafetaVcr.post_fail { std.post }
+            std.retrieve_page
+            std.parse
+            expect(std.status).to eq :parsing_ended_failed
+          end
+        end
+      end
     end
 
     describe 'making HTTP requests' do
@@ -107,6 +156,10 @@ describe Estafeta do
 
         it 'completes OK' do
           expect(std.json).to eq json_result
+        end
+
+        describe 'json result' do
+          pending 'add all the validations of fields that it must have'
         end
       end
 

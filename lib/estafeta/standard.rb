@@ -34,7 +34,7 @@ module Estafeta
       "Lugar - Movimiento": 'lugar_movimiento',
       "Comentarios": 'comentarios'
     }
-    attr_reader :query, :page, :doc, :json
+    attr_reader :query, :page, :doc, :json, :status
 
     # Tipo Guia is: ESTAFETA for 22 chars and REFERENCE for 10 chars
     def initialize(guia_numero: '', tipo_guia: 'ESTAFETA')
@@ -49,24 +49,27 @@ module Estafeta
         'image.x' => '55',
         'image.y' => '10'
       }
+      @status = :new
     end
 
     def post
      @page = HTTParty.post(ENDPOINT, :body => @query)
+     @status = :post_sent
     end
 
     def retrieve_page
       @doc = Nokogiri::HTML(@page.body)
+      @status = :page_retrieved
     end
 
     def parse
+      @status = :parsing_started
       rows = @doc.css('form > table tr')
 
-
-      if rows[1].css('td').text =~ /no hay información disponible/i then
+      if rows[1].css('td').text =~ /no hay información/i then
         result = {'info': 'No hay informacion disponible'}
+        @status = :parsing_ended_failed
       else
-        # Fuuuuuu
         result = {}
         rows.each_with_index do |row, index|
 
@@ -125,6 +128,7 @@ module Estafeta
             result[KEYS[:"#{key}"]] = value
           end
         end # End Rows
+        @status = :parsing_ended_ok
       end # End else
       @json = result
     end # End parse
